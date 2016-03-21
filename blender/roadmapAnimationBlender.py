@@ -19,33 +19,34 @@ def setVisibilities (bpy, objectName, visibleFrame, hideFrame):
 		print ("Object not found: " + objectName)
 
 
+#skpiList: avoid modifying animation on edges which are related to solution path
+def setObjectNotInListVisibility (bpy, namePrefix, firstIndex, lastIndex, skipList, visibleFrame, hideFrame):
+	for i in range(firstIndex,lastIndex+1):
+		if (not (i in skpiList)):
+			print ("set visibility on" + namePrefix + str(i))
+			objectName_i = namePrefix+str(i)
+			setVisibilities (bpy, objectName_i, visibleFrame, hideFrame)
+
+def setObjectInListVisibility (bpy, namePrefix, firstIndex, lastIndex, theList, visibleFrame, hideFrame):
+	for i in range(firstIndex,lastIndex+1):
+		if (i in theList):
+			print ("set visibility on" + namePrefix + str(i))
+			objectName_i = namePrefix+str(i)
+			setVisibilities (bpy, objectName_i, visibleFrame, hideFrame)
+
 def main ():
 	visibleFrame = 0
 	hideFrame = 248
 	
-	## EDGES:
-	# TO FILL MANUALLY: first and last indexes of edges
-	i_first = 0
-	i_last = 1086 # (last + 1)
-	i_test = 0
-	for i in range(i_first,i_last):
-		# avoid modifying animation on edges related to solution path
-		if (i != 1083 and i != 1085 and i != 34 and i != 816 and i != 36 and i != 74 and i != 1058 and i != 1059 and i != 50 and i != 288 and i != 289):
-			print ("set visibility of edge number " + str(i))
-			objectName_i = 'edge'+str(i)
-		setVisibilities (bpy, objectName_i, visibleFrame, hideFrame)
+	edgeNamePrefix = 'edge'
+	edgeSkipList = [1083, 1085, 34, 816, 36, 74, 1058, 1059, 50, 288, 289]
+	setObjectNotInListVisibility (bpy, edgeNamePrefix, 0, 1086, edgeSkipList, visibleFrame, hideFrame) # RM
+	setObjectInListVisibility (bpy, edgeNamePrefix, 0, 1086, edgeSkipList, 120, 0) # PATH
 	
-	## NODES/CONES:
-	# TO FILL MANUALLY: first and last indexes of cones
-	i_first = 0
-	i_last = 338 # (last + 1)
-	i_test = 0
-	for i in range(i_first,i_last):
-		# avoid modifying animation on cones related to waypoints
-		if (i != 91 and i != 337 and i != 293 and i != 92 and i != 73 and i != 108 and i != 331 and i != 100 and i != 44 and i != 179):
-			print ("set visibility of cone number " + str(i))
-			objectName_i = 'Cone_'+str(i)
-			setVisibilities (bpy, objectName_i, visibleFrame, hideFrame)
-
+	coneNamePrefix = 'Cone_'
+	coneSkipList = [91, 337, 293, 92, 73, 108, 331, 100, 44, 179]
+	setObjectNotInListVisibility (bpy, coneNamePrefix, 0, 338, coneSkipList, visibleFrame, hideFrame) # RM
+	setObjectInListVisibility (bpy, coneNamePrefix, 0, 338, coneSkipList, 120, 0) # PATH
+	
 
 main  ()
