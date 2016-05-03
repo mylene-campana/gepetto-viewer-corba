@@ -192,7 +192,10 @@ def setParent (children, parent):
                     pass
         if name in self.materials:
             self.writeCmd ("bpy.context.object.data.materials.append(bpy.data.materials[\"%s\"])" %\
-                    (name,))
+			(name,))
+            #self.writeCmd ("bpy.context.scene.objects.active = bpy.data.objects[bpy.context.object.name].children[0]")
+            #self.writeCmd ("bpy.context.object.data.materials [0] = bpy.data.materials[\"%s\"]" %\
+			#(name,))
 
     def __call__ (self, link):
         geometry = link.visual.geometry
