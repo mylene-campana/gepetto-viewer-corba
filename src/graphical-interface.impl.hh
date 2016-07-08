@@ -97,6 +97,10 @@ public:
 
   virtual bool addXYZaxis (const char* nodeNameCorba, const value_type* colorCorba, float radius, float sizeAxis) throw (Error);
 
+  virtual bool addCircle (const char* nodeNameCorba,
+          const value_type* colorCorba, float radius,
+          const value_type* pose) throw (Error);
+
   virtual bool createRoadmap(const char* nameCorba,const value_type* colorNodeCorba, float radius, float sizeAxis, const value_type* colorEdgeCorba) throw(Error);
 
   virtual bool addEdgeToRoadmap(const char* nameRoadmap, const value_type* posFrom, const value_type* posTo) throw(Error);

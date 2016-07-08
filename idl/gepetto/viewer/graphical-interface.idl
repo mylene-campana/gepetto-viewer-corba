@@ -142,6 +142,9 @@ typedef sequence<Position> PositionSeq;
     /// \param input RGBAcolor : color of the cylinder.
     boolean addCylinder(in string cylinderName, in float radius, in float height, in Color RGBAcolor) raises (Error);
 
+    boolean addCircle(in string cylinderName, in Color RGBAcolor,
+      in float radius, in Transform pose) raises (Error);
+
     /// create a sphere called sphereName
     /// \param input sphereName : name of the sphere.
     /// \param input radius : radius of the sphere.

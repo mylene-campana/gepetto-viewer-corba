@@ -31,6 +31,7 @@
 #include <gepetto/viewer/leaf-node-capsule.h>
 #include <gepetto/viewer/leaf-node-cone.h>
 #include <gepetto/viewer/leaf-node-cylinder.h>
+#include <gepetto/viewer/leaf-node-circle.h>
 #include <gepetto/viewer/leaf-node-line.h>
 #include <gepetto/viewer/leaf-node-face.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
@@ -829,6 +830,29 @@ namespace graphics {
             return true;
           }
     }
+
+    bool WindowsManager::addCircle (const char* nodeNameCorba,
+            const value_type* colorCorba, float radius,
+            const value_type* pose)
+    {
+      std::string nodeName (nodeNameCorba);
+      if (nodes_.find (nodeName) != nodes_.end ()) {
+          std::cout << "You need to chose an other name, \"" << nodeName
+          << "\" already exist." << std::endl;
+          return false;
+      }
+      else {
+          boost::shared_ptr<LeafNodeCircle> cylinder = LeafNodeCircle::create
+            (nodeName,getColor(colorCorba),radius,
+             corbaConfToOsgVec3(pose), corbaConfToOsgQuat(pose));
+          mtx_.lock();
+          WindowsManager::initParent (nodeName, cylinder);
+          addNode (nodeName, cylinder);
+          mtx_.unlock();
+          return true;
+      }
+    }
+    
 
     bool WindowsManager::createRoadmap(const char* nameCorba,const value_type* colorNodeCorba, float radius, float sizeAxis, const value_type* colorEdgeCorba){
         const std::string roadmapName (nameCorba);

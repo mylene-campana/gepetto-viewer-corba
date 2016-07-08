@@ -183,6 +183,9 @@ namespace graphics {
             virtual bool addSquareFace(const char* faceName, const value_type* pos1, const value_type* pos2, const value_type* pos3, const value_type* pos4, const value_type* color);
             virtual bool addTriangleFace(const char* faceName, const value_type* pos1, const value_type* pos2, const value_type* pos3, const value_type* color);
             virtual bool addXYZaxis (const char* nodeNameCorba, const value_type* colorCorba, float radius, float sizeAxis);
+          
+            virtual bool addCircle (const char* nodeNameCorba,
+                    const value_type* colorCorba, float radius, const value_type* pose);
 
             virtual bool createRoadmap(const char* nameCorba,const value_type* colorNodeCorba, float radius, float sizeAxis, const value_type* colorEdgeCorba);
 

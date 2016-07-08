@@ -338,6 +338,20 @@ namespace graphics {
           }
       }
 
+      bool GraphicalInterface::addCircle(const char* nodeNameCorba,
+              const value_type* colorCorba, float radius,
+              const value_type* pose) throw (Error)
+      {
+          try {
+              return windowsManager_->addCircle (nodeNameCorba,
+                      colorCorba,radius,pose);
+          } catch (const std::exception& exc) {
+              throw Error (exc.what ());
+          }
+      }
+
+
+
       /** initialise the roadmap (graphical roadmap)*/
       bool GraphicalInterface::createRoadmap(const char* nameCorba,const value_type* colorNodeCorba, float radius, float sizeAxis, const value_type* colorEdgeCorba) throw(Error){
           try {
