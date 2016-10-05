@@ -194,7 +194,8 @@ namespace gepetto {
     }
 
     OSGWidget *MainWindow::onCreateView() {
-      return onCreateView ("hpp_gui_window_" + QString::number(osgWindows_.size()));
+      //return onCreateView ("hpp_gui_window_" + QString::number(osgWindows_.size()));
+      return onCreateView ("window_hpp_");
     }
 
     OSGWidget *MainWindow::onCreateView(QString objName)
