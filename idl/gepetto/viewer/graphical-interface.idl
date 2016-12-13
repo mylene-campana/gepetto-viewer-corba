@@ -57,6 +57,9 @@ typedef sequence<Position> PositionSeq;
     /// \return the list of node names contained in the group
     Names_t getGroupNodeList(in string group) raises (Error);
 
+    /// Get the list of group (i.e. scene) nodes
+    Names_t getSceneList() raises (Error);
+
     /// Print names of windows on the SceneViewer-corbaserver terminal.
     Names_t getWindowList() raises (Error);
 
@@ -73,6 +76,18 @@ typedef sequence<Position> PositionSeq;
     /// \param input sceneName : name of the groupNode.
     /// \param input windowId : ID of rhe window.
     boolean addSceneToWindow(in string sceneName, in unsigned long windowId) raises (Error);
+
+    /// Attach the camera to the Node nodeName in the WindowManager
+    /// pointed by windowId
+    /// If already attached, detach from the other node
+    /// \param input nodeName : name of the node
+    /// \param input windowId : ID of the window
+    boolean attachCameraToNode(in string nodeName, in unsigned long windowId) raises (Error);
+
+    /// Detach the camera of WindowManager pointed by windowId
+    /// from any node
+    /// \param input windowId : ID of the window
+    boolean detachCamera(in unsigned long windowId) raises (Error);
 
     /// create a floor called floorName.
     /// \param input floorName : name of the floor.
@@ -126,6 +141,9 @@ typedef sequence<Position> PositionSeq;
     /// \param input height : lenght of the cylinder.
     /// \param input RGBAcolor : color of the cylinder.
     boolean addCylinder(in string cylinderName, in float radius, in float height, in Color RGBAcolor) raises (Error);
+
+    boolean addCircle(in string cylinderName, in Color RGBAcolor,
+      in float radius, in Transform pose) raises (Error);
 
     /// create a sphere called sphereName
     /// \param input sphereName : name of the sphere.
@@ -344,6 +362,12 @@ typedef sequence<Position> PositionSeq;
     /// Write current configuration to the motion file
     void captureTransform () raises (Error);
 
+    /// Export the nodes for blender
+    ///
+    /// Append a python3 script corresponding the nodes,
+    /// to be loaded by the blender gepetto plugin.
+    boolean writeBlenderScript (in string filename, in Names_t nodeNames) raises (Error);
+
     /// Write a node and its children to filename
     boolean writeNodeFile (in string nodeName, in string filename) raises (Error);
 
@@ -354,6 +378,17 @@ typedef sequence<Position> PositionSeq;
     /// \param input nodeName : name of the node.
     /// \return a length 7 array
     floatSeq getNodeGlobalTransform(in string nodeName) raises (Error);
+
+    /// Delete node from visualiser
+    /// \param all if nodeName is a group node and all is True, nodes
+    ///        are deleted recursively.
+    void deleteNode (in string nodeName, in boolean all) raises (Error);
+    
+
+    /// change the background color
+    /// \param input windowId : ID of the window
+    /// \param input RGBAcolor : desired color
+    boolean setBackgroundColor(in unsigned long windowId,in Color RGBAcolor);
   };
 };
 };

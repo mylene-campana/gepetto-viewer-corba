@@ -146,6 +146,8 @@ namespace graphics {
             virtual void createSceneWithFloor(const char* sceneNameCorba);
             virtual bool addSceneToWindow(const char* sceneNameCorba, const WindowID windowId);
 
+            virtual bool attachCameraToNode(const char* nodeNameCorba, const WindowID windowId);
+            virtual bool detachCamera(const WindowID windowId);
 
             virtual bool addFloor(const char* floorNameCorba);
 
@@ -181,6 +183,9 @@ namespace graphics {
             virtual bool addSquareFace(const char* faceName, const value_type* pos1, const value_type* pos2, const value_type* pos3, const value_type* pos4, const value_type* color);
             virtual bool addTriangleFace(const char* faceName, const value_type* pos1, const value_type* pos2, const value_type* pos3, const value_type* color);
             virtual bool addXYZaxis (const char* nodeNameCorba, const value_type* colorCorba, float radius, float sizeAxis);
+          
+            virtual bool addCircle (const char* nodeNameCorba,
+                    const value_type* colorCorba, float radius, const value_type* pose);
 
             virtual bool createRoadmap(const char* nameCorba,const value_type* colorNodeCorba, float radius, float sizeAxis, const value_type* colorEdgeCorba);
 
@@ -225,8 +230,11 @@ namespace graphics {
             virtual bool setCaptureTransform (const char* filename, const std::list<std::string>& nodename);
             virtual void captureTransformOnRefresh (bool autoCapture);
             virtual void captureTransform ();
+            virtual bool writeBlenderScript (const char* filename, const std::list<std::string>& nodename);
             virtual bool writeNodeFile (const char* nodename, const char* filename);
             virtual bool writeWindowFile (const WindowID windowId, const char* filename);
+            virtual bool setBackgroundColor(const WindowID windowId,const value_type* colorCorba);
+            
 
             WindowManagerPtr_t getWindowManager (const WindowID wid);
             GroupNodePtr_t getScene (const std::string sceneName);

@@ -95,6 +95,24 @@ namespace graphics {
           }
       }
 
+      bool GraphicalInterface::attachCameraToNode(const char* nodeName, const WindowID windowId)
+      {
+          try {
+              return windowsManager_->attachCameraToNode (nodeName, windowId);
+          } catch (const std::exception& exc) {
+              throw Error (exc.what ());
+          }
+      }
+
+      bool GraphicalInterface::detachCamera(const WindowID windowId)
+      {
+          try {
+              return windowsManager_->detachCamera (windowId);
+          } catch (const std::exception& exc) {
+              throw Error (exc.what ());
+          }
+      }
+
       bool GraphicalInterface::addFloor (const char* floorNameCorba)
           throw (Error)
       {
@@ -320,6 +338,20 @@ namespace graphics {
           }
       }
 
+      bool GraphicalInterface::addCircle(const char* nodeNameCorba,
+              const value_type* colorCorba, float radius,
+              const value_type* pose) throw (Error)
+      {
+          try {
+              return windowsManager_->addCircle (nodeNameCorba,
+                      colorCorba,radius,pose);
+          } catch (const std::exception& exc) {
+              throw Error (exc.what ());
+          }
+      }
+
+
+
       /** initialise the roadmap (graphical roadmap)*/
       bool GraphicalInterface::createRoadmap(const char* nameCorba,const value_type* colorNodeCorba, float radius, float sizeAxis, const value_type* colorEdgeCorba) throw(Error){
           try {
@@ -378,6 +410,15 @@ namespace graphics {
     } catch (const std::exception& exc) {
       throw Error (exc.what ());
     }
+      }
+
+      gepetto::corbaserver::Names_t *GraphicalInterface::getSceneList() throw (Error)
+      {
+        try {
+          return fromStringVector(windowsManager_->getSceneList());
+        } catch (const std::exception& exc) {
+          throw Error (exc.what ());
+        }
       }
 
       gepetto::corbaserver::Names_t* GraphicalInterface::getWindowList () throw (Error)
@@ -599,6 +640,18 @@ namespace graphics {
 	}
       }
 
+      bool GraphicalInterface::writeBlenderScript (const char* filename,
+          const Names_t& nodeNames) throw (Error)
+      {
+        try {
+          std::list <std::string> nodes;
+          to (nodeNames, nodes);
+          return windowsManager_->writeBlenderScript (filename, nodes);
+        } catch (const std::exception& exc) {
+          throw Error (exc.what ());
+        }
+      }
+
       bool GraphicalInterface::writeNodeFile (const char* nodeName,
           const char* filename) throw (Error)
       {
@@ -635,6 +688,25 @@ namespace graphics {
 	  throw Error (exc.what ());
 	}
       }
+
+			void GraphicalInterface::deleteNode (const char* nodeName, bool all) throw (Error)
+			{
+				try {
+					windowsManager_->deleteNode (nodeName, all);
+				} catch (const std::exception& exc) {
+	  			throw Error (exc.what ());
+				}
+			}
+      
+      bool GraphicalInterface::setBackgroundColor(const WindowID windowId,const value_type* colorCorba) throw (Error)
+      {
+          try {
+              return windowsManager_->setBackgroundColor (windowId,colorCorba);
+          } catch (const std::exception& exc) {
+              throw Error (exc.what ());
+          }
+      }
+
     } //end namespace impl
   } //end namespace corbaServer
 } //end namespace graphics

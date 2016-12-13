@@ -1,0 +1,1 @@
+from pythonwidget import Plugin

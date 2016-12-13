@@ -46,6 +46,7 @@ public:
 
   virtual Names_t* getNodeList() throw (Error);
   virtual Names_t* getGroupNodeList(const char* group) throw (Error);
+  virtual Names_t* getSceneList() throw (Error);
   virtual Names_t* getWindowList() throw (Error);
 
   virtual bool setRate(CORBA::Long rate) throw (Error);
@@ -58,6 +59,8 @@ public:
   virtual void createSceneWithFloor(const char* sceneNameCorba)  throw (Error);
   virtual bool addSceneToWindow(const char* sceneNameCorba, const WindowID windowId)  throw (Error);
 
+  virtual bool attachCameraToNode(const char* nodeName, const WindowID windowId);
+  virtual bool detachCamera(const WindowID windowId);
 
   virtual bool addFloor(const char* floorName) throw (Error);
 
@@ -93,6 +96,10 @@ public:
   virtual bool addTriangleFace(const char* faceName, const value_type* pos1, const value_type* pos2, const value_type* pos3, const value_type* color) throw (Error);
 
   virtual bool addXYZaxis (const char* nodeNameCorba, const value_type* colorCorba, float radius, float sizeAxis) throw (Error);
+
+  virtual bool addCircle (const char* nodeNameCorba,
+          const value_type* colorCorba, float radius,
+          const value_type* pose) throw (Error);
 
   virtual bool createRoadmap(const char* nameCorba,const value_type* colorNodeCorba, float radius, float sizeAxis, const value_type* colorEdgeCorba) throw(Error);
 
@@ -138,9 +145,13 @@ public:
   virtual bool setCaptureTransform (const char* filename, const Names_t& nodename) throw (Error);
   virtual void captureTransformOnRefresh (bool autoCapture) throw (Error);
   virtual void captureTransform () throw (Error);
+  virtual bool writeBlenderScript (const char* filename, const Names_t& nodeNames) throw (Error);
   virtual bool writeNodeFile (const char* nodename, const char* filename) throw (Error);
   virtual bool writeWindowFile (const WindowID windowId, const char* filename) throw (Error);
   virtual gepetto::corbaserver::floatSeq* getNodeGlobalTransform(const char* nodeName) throw (Error);
+	virtual void deleteNode (const char* nodeName, bool all) throw (Error);
+  virtual bool setBackgroundColor(const WindowID windowId,const value_type* colorCorba) throw (Error);
+    
 }; // end of class
 
 } /* namespace impl */

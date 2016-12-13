@@ -31,6 +31,7 @@
 #include <gepetto/viewer/leaf-node-capsule.h>
 #include <gepetto/viewer/leaf-node-cone.h>
 #include <gepetto/viewer/leaf-node-cylinder.h>
+#include <gepetto/viewer/leaf-node-circle.h>
 #include <gepetto/viewer/leaf-node-line.h>
 #include <gepetto/viewer/leaf-node-face.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
@@ -44,6 +45,7 @@
 #include <gepetto/viewer/leaf-node-ground.h>
 #include <gepetto/viewer/leaf-node-collada.h>
 #include <gepetto/viewer/urdf-parser.h>
+#include <gepetto/viewer/blender-geom-writer.h>
 
 #include "gepetto/viewer/corba/graphical-interface.hh"
 
@@ -386,6 +388,34 @@ namespace graphics {
             return false;
         }
     }
+  
+     bool WindowsManager::attachCameraToNode(const char* nodeNameCorba, const WindowID windowId)
+     {
+        const std::string nodeName (nodeNameCorba);
+        if (nodes_.find (nodeName) == nodes_.end () || windowId > windowManagers_.size()) {
+    	  std::cout << "Node \"" << nodeName << "\" and/or Window ID" << windowId
+		    << "doesn't exist."
+  		    << std::endl;
+  	  return false;
+        }
+  	mtx_.lock();
+	windowManagers_[windowId]->attachCameraToNode(nodes_[nodeName].get());
+   	mtx_.unlock();
+	return true;
+     }
+
+     bool WindowsManager::detachCamera(const WindowID windowId)
+     {
+        if (windowId > windowManagers_.size()) {
+    	  std::cout << "Window ID " << windowId << " doesn't exist."
+  		    << std::endl;
+  	  return false;
+        }
+  	mtx_.lock();
+	windowManagers_[windowId]->detachCamera();
+   	mtx_.unlock();       
+	return true;
+     }
 
     bool WindowsManager::addFloor(const char* floorNameCorba)
     {
@@ -772,7 +802,7 @@ namespace graphics {
             osgVector3 pos3 (posCorba3[0], posCorba3[1], posCorba3[2]);
             osgVector3 pos4 (posCorba4[0], posCorba4[1], posCorba4[2]);
             LeafNodeFacePtr_t face = LeafNodeFace::create
-                (faceName, pos1, pos2, pos3, pos3, getColor (colorCorba));
+                (faceName, pos1, pos2, pos3, pos4, getColor (colorCorba));
             mtx_.lock();
             WindowsManager::initParent (faceName, face);
             addNode (faceName, face);
@@ -800,6 +830,29 @@ namespace graphics {
             return true;
           }
     }
+
+    bool WindowsManager::addCircle (const char* nodeNameCorba,
+            const value_type* colorCorba, float radius,
+            const value_type* pose)
+    {
+      std::string nodeName (nodeNameCorba);
+      if (nodes_.find (nodeName) != nodes_.end ()) {
+          std::cout << "You need to chose an other name, \"" << nodeName
+          << "\" already exist." << std::endl;
+          return false;
+      }
+      else {
+          boost::shared_ptr<LeafNodeCircle> cylinder = LeafNodeCircle::create
+            (nodeName,getColor(colorCorba),radius,
+             corbaConfToOsgVec3(pose), corbaConfToOsgQuat(pose));
+          mtx_.lock();
+          WindowsManager::initParent (nodeName, cylinder);
+          addNode (nodeName, cylinder);
+          mtx_.unlock();
+          return true;
+      }
+    }
+    
 
     bool WindowsManager::createRoadmap(const char* nameCorba,const value_type* colorNodeCorba, float radius, float sizeAxis, const value_type* colorEdgeCorba){
         const std::string roadmapName (nameCorba);
@@ -1358,6 +1411,19 @@ namespace graphics {
         mtx_.unlock ();
     }
 
+    bool WindowsManager::writeBlenderScript (const char* filename,
+        const std::list<std::string>& nodeNames)
+    {
+      std::vector<NodePtr_t> nodes;
+      std::size_t nb = getNodes (nodeNames.begin(), nodeNames.end(), nodes);
+      if (nb != nodeNames.size())
+        throw std::invalid_argument ("Could not find one of the nodes");
+      BlenderGeomWriterVisitor visitor (filename);
+      for (std::size_t i = 0; i < nodes.size(); ++i)
+        nodes[i]->accept(visitor);
+      return true;
+    }
+
     bool WindowsManager::writeNodeFile (const char* nodename,
         const char* filename)
     {
@@ -1432,4 +1498,13 @@ namespace graphics {
         }
         return res;
     }
+    
+    bool WindowsManager::setBackgroundColor(const WindowID windowId,const value_type* colorCorba)
+    {
+      mtx_.lock();
+      windowManagers_[windowId]->setBackgroundColor(getColor (colorCorba));
+      mtx_.unlock();
+      return true;
+    }
+    
 } // namespace graphics
