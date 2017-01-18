@@ -147,15 +147,8 @@ namespace gepetto {
       setLayout (hblayout);
       hblayout->addWidget(glWidget);
 
-      render_.viewerPtr = viewer_;
-      render_.wsm_ = wsm_;
-      render_.refreshRate = parent->settings_->refreshRate;
-      render_.start ();
-
-      parent->bodyTree()->connect(this,
-          SIGNAL (selected(QString,QVector3D)), SLOT (selectBodyByName(QString)));
-      parent->connect(this, SIGNAL (selected(QString,QVector3D)),
-          SLOT (requestSelectJointFromBodyName(QString)));
+      connect( &timer_, SIGNAL(timeout()), this, SLOT(update()) );
+      timer_.start(parent->settings_->refreshRate);
     }
 
     OSGWidget::~OSGWidget()
@@ -165,6 +158,13 @@ namespace gepetto {
       pickHandler_ = NULL;
       wm_.reset();
       wsm_.reset();
+    }
+
+    void OSGWidget::paintEvent(QPaintEvent*)
+    {
+      wsm_->lock().lock();
+      viewer_->frame();
+      wsm_->lock().unlock();
     }
 
     graphics::WindowsManager::WindowID OSGWidget::windowID() const
@@ -187,13 +187,6 @@ namespace gepetto {
       if (w) {
         w->bodyTree()->addBodyToTree (wsm_->getScene (robotName.toStdString()));
       }
-    }
-
-    void OSGWidget::paintEvent( QPaintEvent* /* paintEvent */ )
-    {
-//        wsm_->lock().lock();
-//        viewer_->frame();
-      //        wsm_->lock().unlock();
     }
 
     void OSGWidget::emitSelected(QString name, QVector3D positionInWorldFrame)
@@ -340,23 +333,5 @@ namespace gepetto {
           break;
       }
     }
-
-    void RenderThread::run()
-    {
-      if (viewerPtr) {
-          while (!viewerPtr->done ()) {
-              wsm_->lock ().lock();
-              viewerPtr->frame();
-              wsm_->lock ().unlock();
-              QThread::msleep(30);
-            }
-        }
-    }
-
-    RenderThread::~RenderThread() {
-      if (viewerPtr) viewerPtr->setDone(true);
-      wait();
-    }
-
   } // namespace gui
 } // namespace gepetto

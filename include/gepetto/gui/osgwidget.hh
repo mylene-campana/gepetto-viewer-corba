@@ -16,24 +16,6 @@
 
 namespace gepetto {
   namespace gui {
-    class RenderThread : public QThread {
-    public:
-      RenderThread () :
-        QThread (), viewerPtr (0), refreshRate (30)
-      {}
-
-      virtual ~RenderThread();
-
-      osgViewer::ViewerRefPtr viewerPtr;
-      WindowsManagerPtr_t wsm_;
-      int refreshRate;
-      bool stop;
-
-      // QThread interface
-    protected:
-      void run();
-    };
-
     /// Widget that displays scenes.
     class OSGWidget : public QWidget
     {
@@ -82,8 +64,7 @@ signals:
         void attachToWindow (const std::string nodeName);
 
       protected:
-
-        virtual void paintEvent( QPaintEvent* paintEvent );
+        virtual void paintEvent(QPaintEvent* event);
 
       private:
         void emitSelected (QString name, QVector3D positionInWorldFrame);
@@ -94,7 +75,7 @@ signals:
         osg::ref_ptr<PickHandler> pickHandler_;
         WindowsManager::WindowID wid_;
         graphics::WindowManagerPtr_t wm_;
-        RenderThread render_;
+        QTimer timer_;
         osgViewer::ViewerRefPtr viewer_;
         osg::ref_ptr <osgViewer::ScreenCaptureHandler> screenCapture_;
 
